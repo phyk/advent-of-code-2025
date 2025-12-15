@@ -1,4 +1,3 @@
-use core::num;
 use std::collections::HashSet;
 
 advent_of_code::solution!(2);
@@ -50,10 +49,12 @@ fn get_patterns(first_digits: u64, number_digits: u64) -> Vec<u64> {
             {
                 number += 10_u64.pow(mult.try_into().unwrap()) * digits;
             }
+            // print!("{} |", number);
             possible_patterns.push(number);
         }
         digits /= 10;
     }
+    // println!();
     possible_patterns
 }
 
@@ -74,10 +75,15 @@ pub fn part_two(input: &str) -> Option<u64> {
             false => 10_u64.pow(start_log_10 / 2 + 1),
         };
         let mut first_digits = start_id / current_pair_multiplier;
+
         if first_digits >= current_pair_multiplier {
             current_pair_multiplier *= 10;
             first_digits /= 10;
         }
+        if first_digits == 0 {
+            first_digits = 1;
+        }
+        // println!("--------------------------\n{} {} - ", start_id, end_id);
         while (first_digits * (current_pair_multiplier) <= end_id) & (first_digits > 0) {
             let patterns = get_patterns(
                 first_digits,
@@ -96,8 +102,20 @@ pub fn part_two(input: &str) -> Option<u64> {
                 first_digits /= 10;
             }
         }
-        for entry in solutions {
+        let mut sorted = solutions.into_iter().collect::<Vec<u64>>();
+        sorted.sort();
+        let filter = sorted.len() == 3;
+        if filter {
+            println!("--------------------------\n{} {} - ", start_id, end_id);
+        }
+        for entry in sorted {
+            if filter {
+                print!("{} | ", entry);
+            }
             sum += entry;
+        }
+        if filter {
+            println!();
         }
     }
     Some(sum)
